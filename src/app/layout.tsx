@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Provider from "./provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,14 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* O Provider criado será o responsável pela interação do React com o Next-Auth, acessando suas funções e informações armazenadas */}
-      <Provider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </Provider>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
