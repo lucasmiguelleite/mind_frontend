@@ -13,7 +13,6 @@ interface ProductCardProps {
 
 export function ProdutoCard({ produto, onEdit, onRemove }: ProductCardProps) {
   const screenWidth = useWindowWidth();
-  console.log(produto.imagem)
 
   return (
     <Card className="w-full p-0">
@@ -40,7 +39,7 @@ export function ProdutoCard({ produto, onEdit, onRemove }: ProductCardProps) {
           <Pencil className="h-4 w-4" />
           Editar
         </Button>
-        <Button variant="outline" className='text-red-500' size={screenWidth < 400 ? 'default' : screenWidth < 768 ? 'lg' : 'sm'} onClick={() => onRemove(produto.id)}>
+        <Button variant="destructive" size={screenWidth < 400 ? 'default' : screenWidth < 768 ? 'lg' : 'sm'} onClick={() => onRemove(produto.id)}>
           <Trash2 className="h-4 w-4" />
           Remover
         </Button>

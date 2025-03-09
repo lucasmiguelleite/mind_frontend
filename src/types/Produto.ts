@@ -4,5 +4,7 @@ export interface Produto {
   descricao: string;
   valor: number;
   estoque: number;
-  imagem: string | File;
+  imagemPath: string | File;
+  imagem?: string | File | null | undefined;
+  userId?: number | null | undefined;
 }
