@@ -10,12 +10,12 @@ export default async function Home() {
   return (
     <>
       <Header />
-      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="items-center justify-items-center p-2 my-2 gap-16 sm:p-5 ">
         {user && (
-          <p>Bem vindo, {user?.name}</p>
+          <p>Seja Bem-vindo, {user?.name}</p>
         )}
-        <Movimentacao />
       </div>
+      <Movimentacao />
     </>
   );
 }

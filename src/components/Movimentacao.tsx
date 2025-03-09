@@ -57,14 +57,14 @@ export function Movimentacao() {
   }
 
   return (
-    <div className="w-full">
-      <h1>Movimentações</h1>
+    <div className="w-full md:p-10 p-2">
+      <h1 className="text-center font-bold">Movimentações</h1>
       <Table className="min-w-full table-auto items-center mx-auto">
         <TableHeader>
           <TableRow className="text-center">
             <TableHead className="text-center w-5">Tipo</TableHead>
             <TableHead className="text-center w-5">ID</TableHead>
-            <TableHead className="text-center w-5">Produto</TableHead>
+            <TableHead className="text-center w-5 md:w-auto">Produto</TableHead>
             <TableHead className="text-center mt-6 md:block hidden">Quantidade</TableHead>
             <TableHead className="text-center sm:block md:hidden w-5">Quant.</TableHead>
             <TableHead className="text-center w-36">Data e Hora</TableHead>
