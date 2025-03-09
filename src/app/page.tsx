@@ -6,14 +6,6 @@ export default async function Home() {
   const session = await getServerAuthSession();
   const user = session?.user;
 
-  // const user = await axios.get('/auth/login', {
-  //   headers: {
-  //     Authorization: `Bearer ${session?.user}`
-  //   },
-  // });
-
-  console.log(session)
-
   return (
     <>
       <Header />

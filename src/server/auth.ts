@@ -38,11 +38,11 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
 
-          const token = response.data.access_token;
-
           if (!response.data) {
             throw new Error("Credenciais inválidas");
           }
+
+          const token = response.data.access_token;
 
           const getUser = await axios.get('/auth/profile',
             {
@@ -53,10 +53,8 @@ export const authOptions: NextAuthOptions = {
           );
 
           return {
-            id: getUser.data.sub,
+            id: token,
             name: getUser.data.nome,
-            email: getUser.data.email,
-            // accessToken: token,
           };
         } catch (error) {
           console.error("Erro no Login: ", error);

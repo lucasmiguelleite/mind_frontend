@@ -9,10 +9,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -20,6 +21,14 @@ const Login = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      return router.push("/");
+    }
+
+  }, [status, router])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +42,7 @@ const Login = () => {
         redirect: false,
       });
       if (res?.error) {
-        throw setError(res.error);
+        throw setError("Usuário ou senha estão incorretos");
       }
       router.push("/");
     } catch (err) {
@@ -41,8 +50,6 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-
-
   };
 
   return (
