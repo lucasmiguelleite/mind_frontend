@@ -34,7 +34,6 @@ const Login = () => {
       if (res?.error) {
         throw setError(res.error);
       }
-      alert("Success");
       router.push("/");
     } catch (err) {
       setError("Ocorreu um erro");
