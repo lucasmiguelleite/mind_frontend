@@ -129,3 +129,11 @@
 .authInput {
   @apply border h-11 my-2;
 }
+
+.link {
+  @apply underline text-blue-600 text-center;
+}
+
+Button {
+  @apply cursor-pointer;
+}

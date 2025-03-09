@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -36,7 +37,7 @@ const Login = () => {
       }
       router.push("/");
     } catch (err) {
-      setError("Ocorreu um erro");
+      setError("Usuário ou senha estão incorretos");
     } finally {
       setLoading(false);
     }
@@ -76,13 +77,15 @@ const Login = () => {
                   required
                 />
               </div>
+              {error && <p className="text-red-500 text-sm text-center mb-2">{error}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={!password || !email || loading}>
               {loading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-center">
+          <Link className="link" href={'/cadastro'}>Criar uma conta</Link>
         </CardFooter>
       </Card>
     </section>
