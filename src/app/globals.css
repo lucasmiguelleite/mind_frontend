@@ -131,9 +131,13 @@
 }
 
 .link {
-  @apply underline text-blue-600 text-center;
+  @apply hover:underline hover:cursor-pointer text-blue-600 text-center;
+}
+
+.navLink {
+  @apply hover:underline hover:cursor-pointer text-center;
 }
 
 Button {
-  @apply cursor-pointer;
+  @apply hover:cursor-pointer;
 }

@@ -57,7 +57,7 @@ export function Movimentacao() {
   }
 
   return (
-    <div className="w-full md:p-10 p-2">
+    <div className="w-full mt-10 md:p-10 p-2">
       <h1 className="text-center font-bold">Movimentações</h1>
       <Table className="min-w-full table-auto items-center mx-auto">
         <TableHeader>
