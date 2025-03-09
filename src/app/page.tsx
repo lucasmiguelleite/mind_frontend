@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { Movimentacao } from "@/components/Movimentacao";
 import { getServerAuthSession } from "@/server/auth";
 import axios from "axios";
 
@@ -13,6 +14,7 @@ export default async function Home() {
         {user && (
           <p>Bem vindo, {user?.name}</p>
         )}
+        <Movimentacao />
       </div>
     </>
   );

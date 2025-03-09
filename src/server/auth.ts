@@ -1,7 +1,22 @@
 import axios from "@/lib/axios";
-import { getServerSession, NextAuthOptions } from "next-auth";
+import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      jwt: string;
+    } & DefaultSession["user"];
+  }
+  interface User {
+    id: string;
+    name: string;
+    token: string;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -9,14 +24,20 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     session: ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.sub,
-        },
-      };
+      session.user.id = token.id as string;
+      session.user.name = token.name as string;
+      session.user.jwt = token.jwt as string; // Adiciona o token JWT ao user
+      return session;
     },
+    jwt: ({ token, user }) => {
+      if (user) {
+        // Armazena os dados do usuário e o token JWT do backend
+        token.id = user.id;
+        token.name = user.name;
+        token.jwt = user.token; // Guarda o token JWT do backend
+      }
+      return token;
+    }
   },
   pages: {
     signIn: '/login',
@@ -53,8 +74,9 @@ export const authOptions: NextAuthOptions = {
           );
 
           return {
-            id: token,
+            id: getUser.data.sub,
             name: getUser.data.nome,
+            token: token,
           };
         } catch (error) {
           console.error("Erro no Login: ", error);
