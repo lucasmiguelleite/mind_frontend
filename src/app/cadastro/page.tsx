@@ -10,9 +10,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "@/lib/axios";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Cadastro = () => {
   const [email, setEmail] = useState<string>("");
@@ -22,6 +23,14 @@ const Cadastro = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      return router.push("/");
+    }
+
+  }, [status, router])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +38,11 @@ const Cadastro = () => {
 
     if (password.length < 4 || password.length > 8) {
       setError("A senha deve ter entre 4 e 8 caracteres.");
+      return;
+    }
+
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)) {
+      setError("A senha deve ter no minímo um caractere numérico, uma letra maiúscula e uma letra minúscula.");
       return;
     }
 
@@ -41,15 +55,26 @@ const Cadastro = () => {
       setLoading(true);
       const res = await axios.post('/user', { email, password, name });
 
-      console.log(res.data);
+      if (!res.data) {
+        throw new Error();
+      }
+
+      const resLogin = await signIn("credentials", {
+        email: email,
+        password: password,
+        redirect: false,
+      });
+
+      if (!resLogin) {
+        throw new Error("Não foi possível cadastrar o usuário.");
+      }
+
       router.push("/");
     } catch (err) {
-      setError("Ocorreu um erro, Tente novamente");
+      setError("Email fornecido já está sendo utilizado por outro usuário");
     } finally {
       setLoading(false);
     }
-
-
   };
 
   return (
@@ -90,7 +115,6 @@ const Cadastro = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   className="authInput"
-                  pattern="{4,8}"
                   required
                 />
                 <Label htmlFor="passwordConfirmCadastro">Confirme a senha</Label>
