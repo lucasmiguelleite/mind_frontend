@@ -9,7 +9,8 @@ import { MoveDownLeft, MoveUpRight } from 'lucide-react';
 
 export function Movimentacao() {
   const { data: session } = useSession();
-  const [movimentacao, setMovimentacao] = useState<{ id: number; nome: string; quantidade: number; data: string; tipo: string }[]>([]);
+  const [movimentacao, setMovimentacao] = useState<{ id: number; nome: string; quantidade: number; data: string; tipo: string; produtoExcluido: string | null; produtoId: number | null; }[]>([]);
+  const [produtoNames, setProdutoNames] = useState<{ [key: number]: string }>({}); // Para armazenar os nomes dos produtos por ID
 
   useEffect(() => {
     async function getMovimentacao() {
@@ -19,8 +20,14 @@ export function Movimentacao() {
             Authorization: `Bearer ${session?.user.jwt}`
           }
         });
-        console.log(response.data);
         setMovimentacao(response.data);
+
+        // Para cada movimentação, buscar o nome do produto correspondente
+        response.data.forEach((mov: any) => {
+          if (mov.produtoId && !produtoNames[mov.produtoId]) {
+            fetchProdutoName(mov.produtoId); // Chama a função para buscar o nome do produto
+          }
+        });
       } catch (err) {
         console.error(err);
       }
@@ -30,8 +37,24 @@ export function Movimentacao() {
     }
   }, [session]);
 
-
-  console.log(movimentacao);
+  // Função para buscar o nome do produto baseado no seu ID
+  async function fetchProdutoName(produtoId: number) {
+    try {
+      const response = await axios.get(`/produtos/${produtoId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.jwt}`
+          }
+        }
+      );
+      setProdutoNames((prevNames) => ({
+        ...prevNames,
+        [produtoId]: response.data.nome
+      }));
+    } catch (err) {
+      console.error(`Erro ao buscar produto ${produtoId}`, err);
+    }
+  }
 
   return (
     <div className="w-full">
@@ -41,7 +64,7 @@ export function Movimentacao() {
           <TableRow className="text-center">
             <TableHead className="text-center w-5">Tipo</TableHead>
             <TableHead className="text-center w-5">ID</TableHead>
-            <TableHead className="text-center w-5">Nome Produto</TableHead>
+            <TableHead className="text-center w-5">Produto</TableHead>
             <TableHead className="text-center mt-6 md:block hidden">Quantidade</TableHead>
             <TableHead className="text-center sm:block md:hidden w-5">Quant.</TableHead>
             <TableHead className="text-center w-36">Data e Hora</TableHead>
@@ -51,14 +74,14 @@ export function Movimentacao() {
           {movimentacao.map((mov) => (
             <TableRow key={mov.id}>
               <TableCell>
-                {mov.tipo === "entrada" ? (
+                {mov.tipo == "Saída" ? (
                   <MoveDownLeft color="red" />
                 ) : (
                   <MoveUpRight color="green" />
                 )}
               </TableCell>
               <TableCell>{mov.id}</TableCell>
-              <TableCell className="text-center">{mov.nome}</TableCell>
+              <TableCell className="text-center">{mov.produtoExcluido ? mov.produtoExcluido : mov.produtoId ? produtoNames[mov.produtoId] : "Carregando..."}</TableCell>
               <TableCell className="text-center">{mov.quantidade}</TableCell>
               <TableCell className="text-center">
                 {mov.data && !isNaN(new Date(mov.data).getTime()) ? (
