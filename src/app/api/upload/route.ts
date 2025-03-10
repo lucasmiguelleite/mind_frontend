@@ -11,6 +11,7 @@ export const config = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log(req);
   if (req.method === 'POST') {
     const form = new formidable.IncomingForm();
 

@@ -3,7 +3,7 @@
 import CriarProdutoModal from "@/components/CriarProdutoModal";
 import Header from "@/components/Header";
 import { ProdutoCard } from "@/components/ProdutoCard";
-import { ProdutoEditDialog } from "@/components/ProdutoEditDialog";
+import ProdutoEditModal from "@/components/ProdutoEditModal";
 import { Button } from "@/components/ui/button";
 import axios from "@/lib/axios";
 import { Produto } from "@/types/Produto";
@@ -13,10 +13,11 @@ import { useEffect, useState } from "react";
 import { toast, Toaster } from "sonner";
 
 const Produtos = () => {
+  const [produtoParaEdicao, setProdutoParaEdicao] = useState<Produto | null>(null);
   const { data: session } = useSession();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [produtoCriado, setProdutoCriado] = useState<Produto | null>(null);
-  const [produtoParaEdicao, setProdutoParaEdicao] = useState<Produto | null>(null);
+  const [id, setId] = useState<Number>(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddProductOpen, setIsAddProductOpen] = useState(false)
   const token = session?.user.jwt;
@@ -33,9 +34,14 @@ const Produtos = () => {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (produtoParaEdicao) {
+      setIsDialogOpen(true);
+    }
+  }, [produtoParaEdicao]);
+
   const handleEdit = (produto: Produto) => {
     setProdutoParaEdicao(produto);
-    setIsDialogOpen(true);
   };
 
   const handleRemove = async (id: number | undefined) => {
@@ -57,51 +63,6 @@ const Produtos = () => {
     setProdutos((prevProdutos) => [...prevProdutos, produto]);
   };
 
-
-  const handleSaveProduto = async (formData: FormData) => {
-    try {
-      const data = {
-        id: produtoParaEdicao?.id,
-        nome: formData.get("nome"),
-        preco: parseFloat(formData.get("preco") as string),
-        quantidade: parseInt(formData.get("quantidade") as string),
-        descricao: formData.get("descricao") as string,
-        imagem: formData.get("imagem"),
-      }
-      const response = await axios.patch("/produtos", data, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Enviar como multipart/form-data
-        },
-      });
-
-      // Atualizar o produto na lista local
-      setProdutos((prevProdutos) =>
-        prevProdutos.map((produto) =>
-          produto.id === response.data[0].id ? response.data[0] : produto
-        )
-      );
-      setIsDialogOpen(false);
-      toast.success("Produto editado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao salvar produto:", error);
-    }
-  };
-
-  if (produtos.length === 0) {
-    return (
-      <>
-        <Header home={false} />
-        <div className="container min-h-screen min-w-screen">
-          <div className="my-48 flex justify-center">
-            <div className="text-center text-2xl md:text-lg">
-              <h1> Você ainda não possui nenhum produto adicionado.</h1>
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
-
   const handleAddProduto = async (produto: Produto) => {
 
     try {
@@ -113,7 +74,6 @@ const Produtos = () => {
         estoque: Number(produto.estoque),
         userId: Number(session?.user?.id),
       }
-      console.log(data)
       const response = await axios.post('/produtos', data, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -129,38 +89,84 @@ const Produtos = () => {
         });
       }
 
-
-
       console.log(response)
-      setProdutoCriado(response.data);
+      handleProdutoCriado(response.data);
       setIsAddProductOpen(false)
       toast.success('Produto criado!');
     } catch (error) {
       console.error("Erro ao adicionar produto:", error);
     }
-
   }
+
+  const handleSaveProduto = async (produto: Produto) => {
+    try {
+      if (!produtoParaEdicao || !produtoParaEdicao.id) {
+        throw new Error('Não há produto para editar');
+      }
+      setId(produtoParaEdicao.id);
+      console.log(produtoParaEdicao.id);
+      const data = {
+        id: produtoParaEdicao.id,
+        nome: produto.nome,
+        descricao: produto.descricao,
+        imagem: produto.imagemPath,
+        valor: Number(produto.valor),
+        estoque: Number(produto.estoque),
+      }
+      if (!data) {
+        throw new Error();
+      }
+      console.log(data)
+      const response = await axios.patch("/produtos", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setIsDialogOpen(false);
+      window.location.reload();
+
+      // // Atualizar o produto na lista local
+      // setProdutos((prevProdutos) =>
+      //   prevProdutos.map((produto) =>
+      //     produtoParaEdicao.id === response.data[0].id ? response.data[0] : produto
+      //   )
+      // );
+      toast.success("Produto editado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar produto:", error);
+    }
+  };
 
   return (
     <>
       <Header home={false} />
       <Toaster />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 mx-2 md:mx-10 mb-20 mt-6 lg:grid-cols-4 gap-6">
-        {produtos.map((product) => (
-          <ProdutoCard
-            key={product.id}
-            produto={product}
-            onEdit={handleEdit}
-            onRemove={handleRemove}
-          />
-        ))}
+        {produtos && produtos.length > 0 ? (
+          produtos.map((product) => (
+            <ProdutoCard
+              key={product.id}
+              produto={product}
+              onEdit={handleEdit}
+              onRemove={handleRemove}
+            />
+          ))) :
+          <div className="container min-h-screen min-w-screen">
+            <div className="my-48 flex justify-center">
+              <div className="text-center text-2xl md:text-lg">
+                <h1> Você ainda não possui nenhum produto adicionado.</h1>
+              </div>
+            </div>
+          </div>
+        })
+
       </div>
       {/* Dialog para editar o produto */}
-      <ProdutoEditDialog
+      <ProdutoEditModal
+        isModalOpen={isDialogOpen && produtoParaEdicao !== null}
+        setIsModalOpen={setIsDialogOpen}
+        onSubmit={handleSaveProduto}
         produto={produtoParaEdicao}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onSave={handleSaveProduto}
       />
       <Button className="fixed bottom-1 right-1 size-20 rounded-full" onClick={() => setIsAddProductOpen(true)}>
         <Plus className="size-15" />

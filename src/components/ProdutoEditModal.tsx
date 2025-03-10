@@ -13,42 +13,38 @@ import { Label } from "@/components/ui/label"
 import { Produto } from "@/types/Produto"
 import { useState } from "react"
 
-interface CriarProdutoModalProps {
+interface ProdutoEditModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   onSubmit: (produto: Produto) => void;
-  title?: string;
-  icon?: React.ReactNode;
+  produto: Produto | null;
 }
 
-export default function CriarProdutoModal({
+export default function ProdutoEditModal({
   isModalOpen,
   setIsModalOpen,
   onSubmit,
-  title,
-  icon,
-
-}: CriarProdutoModalProps) {
+  produto,
+}: ProdutoEditModalProps) {
 
   // Estado para controlar os campos do formulário
-  const [produto, setProduto] = useState<Produto>({
-    nome: '',
-    descricao: '',
-    valor: 0.00,
-    estoque: 0,
-    imagemPath: '',
-    imagem: null,
+  const [produtoEditado, setProdutoEditado] = useState<Produto>({
+    nome: produto?.nome ?? '',
+    descricao: produto?.descricao ?? '',
+    valor: produto?.valor ?? 0,
+    estoque: produto?.estoque ?? 1,
+    imagemPath: produto?.imagemPath ?? '',
   });
+
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     const image = `/images/${file?.name}`;
 
-    console.log(file);
     // Atualiza o estado com o arquivo de imagem selecionado
     if (image) {
 
-      setProduto(prevProduto => ({
+      setProdutoEditado(prevProduto => ({
         ...prevProduto,
         imagem: file, // armazenar o arquivo no estado
         imagemPath: image, // armazenar a URL da imagem no estado
@@ -59,14 +55,14 @@ export default function CriarProdutoModal({
   const handSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    onSubmit(produto); // Chama a função onSubmit passando os dados do produto
+    onSubmit(produtoEditado); // Chama a função onSubmit passando os dados do produto
   };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Adicionar Novo Produto</DialogTitle>
+          <DialogTitle>Editar Produto</DialogTitle>
           <DialogDescription>Clique em "Salvar" quando tiver terminado.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handSubmit} className="grid gap-4 py-4">
@@ -77,7 +73,7 @@ export default function CriarProdutoModal({
             <Input
               id="nome"
               className="col-span-3"
-              onChange={(e) => setProduto({ ...produto, nome: e.target.value })}
+              onChange={(e) => setProdutoEditado({ ...produtoEditado, nome: e.target.value })}
               required
             />
           </div>
@@ -88,7 +84,7 @@ export default function CriarProdutoModal({
             <Input
               id="descricao"
               className="col-span-3"
-              onChange={(e) => setProduto({ ...produto, descricao: e.target.value })}
+              onChange={(e) => setProdutoEditado({ ...produtoEditado, descricao: e.target.value })}
               required
             />
           </div>
@@ -102,7 +98,7 @@ export default function CriarProdutoModal({
               step='any'
               className="col-span-3"
               min={0.01}
-              onChange={(e) => setProduto({ ...produto, valor: parseFloat(e.target.value) || 0 })}
+              onChange={(e) => setProdutoEditado({ ...produtoEditado, valor: parseFloat(e.target.value) || 0 })}
               required
             />
           </div>
@@ -115,7 +111,7 @@ export default function CriarProdutoModal({
               type="number"
               className="col-span-3"
               min={1}
-              onChange={(e) => setProduto({ ...produto, estoque: +e.target.value })}
+              onChange={(e) => setProdutoEditado({ ...produtoEditado, estoque: +e.target.value })}
               required
             />
           </div>
@@ -133,7 +129,7 @@ export default function CriarProdutoModal({
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Criar Produto</Button>
+            <Button type="submit">Salvar</Button>
           </DialogFooter>
         </form>
       </DialogContent>

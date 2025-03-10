@@ -34,7 +34,7 @@ export function ProdutoCard({ produto, onEdit, onRemove }: ProductCardProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between space-x-2">
+      <CardFooter className="flex justify-between space-x-2 mb-5">
         <Button variant="outline" size={screenWidth < 400 ? 'default' : screenWidth < 768 ? 'lg' : 'sm'} onClick={() => onEdit(produto)}>
           <Pencil className="h-4 w-4" />
           Editar
