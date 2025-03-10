@@ -158,7 +158,7 @@ const Produtos = () => {
               </div>
             </div>
           </div>
-        })
+        }
 
       </div>
       {/* Dialog para editar o produto */}

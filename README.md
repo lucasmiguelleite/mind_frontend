@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Front-end Case MindGroup
+Este projeto foi criado com o propósito de servir as necessidades do caso de processo seletivo da empresa Mind Group Consulting.
 
-## Getting Started
+## Requisitos 
+Servir um front-end utilizando React, TypeScript, utilizando o framework Next.js. Usando sistema de autenticação de usuários, com a função de login, logout, cadastro.
 
-First, run the development server:
+Além da manipulação ( exclusão, criação e edição ) de produtos. Tudo isso envolto de um design responsivo e moderno.
 
+## Intruções para Instalação e Inicialização do Projeto
+
+Após clonar o repositório do git, execute o seguinte comando para instalar as dependências:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Após a instalação das dependências, o projeto está pronto para ser inicializado, com as seguintes possibilidades:
+##
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* Servidor de Testes
+```bash
+npm run dev
+```
+##
+* Servidor de Produção
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Para isso será necessário gerar os arquivos de produção primeiro:
+```bash 
+npm run build
+```
+E então executar o seguinte comando:
+```bash 
+npm run start
+```
 
-## Learn More
+## Páginas
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| URL | Conteúdo |
+ |----------|----------|
+  / | Página inicial das Movimentações| 
+ /produtos | Página de Produtos |
+  /login | Página de Login|
+  /cadastro | Página de Cadastro |
